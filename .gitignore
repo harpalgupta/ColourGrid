@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/ColourGrid/obj
+/ColourGrid/bin/Debug/netcoreapp3.1
+/ColourGridTests/obj
+/ColourGridTests/bin/Debug/netcoreapp3.1
