@@ -41,5 +41,24 @@
 
         }
 
+        public void FillPixel(string expectedColour, int[] pixelPosition)
+        {
+            grid[pixelPosition[0], pixelPosition[1]] = expectedColour;
+        }
+
+        public void GetAllAdjacentSameColourPixels(int[] pixelPosition)
+        {
+            var currentColour = grid[pixelPosition[0], pixelPosition[1]];
+            var upColour = grid[pixelPosition[0], pixelPosition[1] - 1];
+            var downColour = grid[pixelPosition[0], pixelPosition[1] +1];
+            var leftColour = grid[pixelPosition[0]-1, pixelPosition[1] ];
+            var rightColour = grid[pixelPosition[0]+11, pixelPosition[1] ];
+
+        }
+
+        public string GetPixelColour(int[] pixelPosition)
+        {
+            return grid[pixelPosition[0],pixelPosition[1]];
+        }
     }
 }

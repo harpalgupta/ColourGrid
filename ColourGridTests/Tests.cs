@@ -38,6 +38,34 @@ namespace ColourGridTests
             Assert.That(grid[0,2], Is.EqualTo(expectedColour));
 
         }
+        
+        [Test]
+        public void GivenAnFillColumnWithAColourAndStartPositionAndEndPosition_ThenPixelsAreColoured()
+        {
+            colourGrid = new Grid(4);
+            var expectedColour = "red";
+            colourGrid.FillColumn(expectedColour, 0, 1, 2);
+
+            var grid = colourGrid.GetGridContent();
+            Assert.That(grid[1,0], Is.EqualTo(expectedColour));
+            Assert.That(grid[2,0], Is.EqualTo(expectedColour));
+
+        }
+        
+        [Test]
+        public void GivenAnFillPixelWithAColourAndStartPositionAndEndPosition_ThenPixelsAreColoured()
+        {
+            colourGrid = new Grid(4);
+            var expectedColour = "red";
+            int[] intarray = {0, 1}; 
+            colourGrid.FillPixel(expectedColour, intarray);
+
+            var grid = colourGrid.GetGridContent();
+            Assert.That(grid[0,1], Is.EqualTo(expectedColour));
+
+        }
+        
+        
 
     }
 }
