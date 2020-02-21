@@ -1,11 +1,20 @@
-﻿namespace ColourGridProject
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using ColourGrid;
+
+namespace ColourGridProject
 {
     public class Grid
     {
         private string[,] grid;
+        private int gridDimension;
+        private List<PixelPosition> relatedSameColourPixels = new List<PixelPosition>();
+        private List<PixelPosition> previousRelatedSameColourPixels = new List<PixelPosition>();
 
         public Grid(int gridDimension)
         {
+            this.gridDimension = gridDimension;
             grid = new string[gridDimension, gridDimension];
 
         }
@@ -48,14 +57,59 @@
 
         public void GetAllAdjacentSameColourPixels(int[] pixelPosition)
         {
+            bool xIsZero = false;
+            bool yIsZero = false;
+
+            bool xIsAtEnd = false;
+            bool yIsAtEnd = false;
+            
+            
+            if (pixelPosition[0] == 0)
+            {
+                xIsZero = true;
+            }
+            
+            if (pixelPosition[1] == 0)
+            {
+                yIsZero = true;
+            }
+            
+            if (pixelPosition[0] == gridDimension-1)
+            {
+                xIsAtEnd = true;
+            }
+            
+            if (pixelPosition[1] == gridDimension-1)
+            {
+                yIsAtEnd = true;
+            }
+            
+            
             var currentColour = grid[pixelPosition[0], pixelPosition[1]];
-            var upColour = grid[pixelPosition[0], pixelPosition[1] - 1];
-            var downColour = grid[pixelPosition[0], pixelPosition[1] +1];
-            var leftColour = grid[pixelPosition[0]-1, pixelPosition[1] ];
-            var rightColour = grid[pixelPosition[0]+11, pixelPosition[1] ];
+
+            var upPosition = yIsZero ? null:new PixelPosition{x=pixelPosition[0], y=pixelPosition[1] - 1};
+            var leftPosition =  xIsZero ? null:new PixelPosition{x=pixelPosition[0] - 1, y=pixelPosition[1] };
+            var downPosition = yIsAtEnd  ? null:new PixelPosition{x=pixelPosition[0], y=pixelPosition[1] + 1};
+            var rightPosition = xIsAtEnd ? null:new PixelPosition{x=pixelPosition[0] + 1, y=pixelPosition[1] };
+
+            if (upPosition!=null && grid[upPosition.x,upPosition.y] == currentColour)
+            {
+                relatedSameColourPixels.Add(upPosition);
+            }
+            if (leftPosition !=null && grid[leftPosition.x,leftPosition.y] == currentColour)
+            {
+                relatedSameColourPixels.Add(leftPosition);
+            } 
+            if (downPosition !=null && grid[downPosition.x,downPosition.y] == currentColour)
+            {
+                relatedSameColourPixels.Add(downPosition);
+            } 
+            if (rightPosition!=null && grid[rightPosition.x,rightPosition.y] == currentColour)
+            {
+                relatedSameColourPixels.Add(rightPosition);
+            }
 
         }
-
         public string GetPixelColour(int[] pixelPosition)
         {
             return grid[pixelPosition[0],pixelPosition[1]];
