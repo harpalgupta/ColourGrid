@@ -64,8 +64,21 @@ namespace ColourGridTests
             Assert.That(grid[0,1], Is.EqualTo(expectedColour));
 
         }
-        
-        
+
+        [Test]
+        public void GivenABlockOfColouredPixels_AndPixelPositionInBlockGivrn_ThenAdjacentPixelsAreReturned()
+        {
+            colourGrid = new Grid(4);
+            var expectedColour = "red";
+            colourGrid.FillRow(expectedColour, 0, 1, 2);
+            colourGrid.FillRow(expectedColour, 1, 1, 2);
+
+            var adjecent = colourGrid.GetAllAdjacentSameColourPixels(new int[] { 0, 1 });
+            var grid = colourGrid.GetGridContent();
+            Assert.That(grid[0, 1], Is.EqualTo(expectedColour));
+
+        }
+
 
     }
 }
