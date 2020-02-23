@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ColourGrid;
+using ColourGridProject.Models;
 
 namespace ColourGridProject
 {
     public class Grid
     {
-        private string[,] grid;
+        private Pixel[,] grid;
         private int gridDimension;
         private List<PixelPosition> sameColourPixelsToIterate = new List<PixelPosition>();
         private List<PixelPosition> previousRelatedSameColourPixels = new List<PixelPosition>();
@@ -16,21 +17,30 @@ namespace ColourGridProject
         public Grid(int gridDimension)
         {
             this.gridDimension = gridDimension;
-            grid = new string[gridDimension, gridDimension];
+            this.grid = new Pixel[gridDimension, gridDimension];
 
         }
 
-        public string[,] GetGridContent()
+
+        private bool IsPositionValid(PixelPosition pixelPosition)
+        {
+            if ((pixelPosition.x >=0 &&  pixelPosition.x < gridDimension) &&(pixelPosition.y >= 0 && pixelPosition.y < gridDimension))
+            {
+                return true;
+            }
+            return false;
+        }
+        public Pixel[,] GetGridContent()
         {
             return grid;
         } 
 
         public void FillRow( string colour,int row, int startPosition, int endPosition)
         {
-            var lowest = startPosition < endPosition ? startPosition : endPosition;
-            var highest = startPosition > endPosition ? startPosition : endPosition;
+            var start = startPosition < endPosition ? startPosition : endPosition;
+            var end = startPosition > endPosition ? startPosition : endPosition;
 
-            for (int currentPixel = lowest; currentPixel <= highest; currentPixel++)
+            for (int currentPixel = start; currentPixel <= end; currentPixel++)
             {
                 grid[row, currentPixel] = colour;
 
