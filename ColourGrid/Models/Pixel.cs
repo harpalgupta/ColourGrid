@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ColourGridProject.Models
 {
-    class Pixel
+    public class Pixel
     {
         public PixelPosition position { get; set; }
         public string Colour { get; set; }

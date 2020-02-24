@@ -34,8 +34,8 @@ namespace ColourGridTests
             colourGrid.FillRow(expectedColour, 0, 1, 2);
 
             var grid = colourGrid.GetGridContent();
-            Assert.That(grid[0,1], Is.EqualTo(expectedColour));
-            Assert.That(grid[0,2], Is.EqualTo(expectedColour));
+            Assert.That(grid[0,1].Colour, Is.EqualTo(expectedColour));
+            Assert.That(grid[0,2].Colour, Is.EqualTo(expectedColour));
 
         }
         
@@ -47,8 +47,9 @@ namespace ColourGridTests
             colourGrid.FillColumn(expectedColour, 0, 1, 2);
 
             var grid = colourGrid.GetGridContent();
-            Assert.That(grid[1,0], Is.EqualTo(expectedColour));
-            Assert.That(grid[2,0], Is.EqualTo(expectedColour));
+            
+            Assert.That(grid[1,0].Colour, Is.EqualTo(expectedColour));
+            Assert.That(grid[2,0].Colour, Is.EqualTo(expectedColour));
 
         }
         
@@ -57,11 +58,12 @@ namespace ColourGridTests
         {
             colourGrid = new Grid(4);
             var expectedColour = "red";
-            int[] intarray = {0, 1}; 
-            colourGrid.FillPixel(expectedColour, intarray);
-
+            PixelPosition pixelPosition =  new PixelPosition{x=0, y=1}; 
+            colourGrid.FillPixel(expectedColour, pixelPosition);
             var grid = colourGrid.GetGridContent();
-            Assert.That(grid[0,1], Is.EqualTo(expectedColour));
+
+            var resultPixel = grid[0, 1];
+            Assert.That(resultPixel.Colour, Is.EqualTo(expectedColour));
 
         }
 
@@ -73,9 +75,10 @@ namespace ColourGridTests
             colourGrid.FillRow(expectedColour, 0, 1, 2);
             colourGrid.FillRow(expectedColour, 1, 1, 2);
 
-            var adjecent = colourGrid.GetAllAdjacentSameColourPixels(new int[] { 0, 1 });
+            var adjecent = colourGrid.GetAllAdjacentSameColourPixels(new PixelPosition { x=1, y=0 });
             var grid = colourGrid.GetGridContent();
-            Assert.That(grid[0, 1], Is.EqualTo(expectedColour));
+            var resultPixel = grid[0, 1];
+            Assert.That(resultPixel.Colour, Is.EqualTo(expectedColour));
 
         }
 
