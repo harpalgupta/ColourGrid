@@ -9,19 +9,17 @@ namespace ColourGridProject
     public class Grid
     {
         private Pixel[,] grid;
-        private int gridDimension;
-        private bool _morePixelsToCheck = false;
+        private bool _morePixelsToCheck;
         private readonly List<PixelPosition> _pixels = new List<PixelPosition>();
 
         public Grid(int gridDimension)
         {
-            this.gridDimension = gridDimension;
-            this.grid = new Pixel[gridDimension, gridDimension];
+            grid = new Pixel[gridDimension, gridDimension];
         }
 
         public Grid(int gridDimensionX, int gridDimensionY)
         {
-            this.grid = new Pixel[gridDimensionY, gridDimensionX];
+            grid = new Pixel[gridDimensionY, gridDimensionX];
         }
 
 
@@ -42,8 +40,7 @@ namespace ColourGridProject
 
         public void FillRow(string colour, int row, int startPosition, int endPosition)
         {
-            var start = startPosition < endPosition ? startPosition : endPosition;
-            var end = startPosition > endPosition ? startPosition : endPosition;
+            var (start, end) = GetStartAndEnd(startPosition, endPosition);
 
             for (int currentPixel = start; currentPixel <= end; currentPixel++)
             {
@@ -66,12 +63,19 @@ namespace ColourGridProject
             }
         }
 
+        private static (int start, int end) GetStartAndEnd(int positionA, int positionB)
+        {
+            var start = positionA < positionB ? positionA : positionB;
+            var end = positionA > positionB ? positionA : positionB;
+            return (start, end);
+        }
+
         public void FillColumn(string colour, int column, int startPosition, int endPosition)
         {
-            var lowest = startPosition < endPosition ? startPosition : endPosition;
-            var highest = startPosition > endPosition ? startPosition : endPosition;
+            var (start, end) = GetStartAndEnd(startPosition, endPosition);
 
-            for (int currentPixel = lowest; currentPixel <= highest; currentPixel++)
+
+            for (int currentPixel = start; currentPixel <= end; currentPixel++)
             {
                 var currentPosition = new PixelPosition
                 {
@@ -156,7 +160,6 @@ namespace ColourGridProject
                     return notYetSeenPixelsPositions;
                 }
             }
-
 
             return _pixels;
         }

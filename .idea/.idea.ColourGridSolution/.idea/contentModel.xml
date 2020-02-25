@@ -6,7 +6,6 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="ColourGrid.cs" t="Include" />
         <e p="ColourGridProject.csproj" t="IncludeRecursive" />
-        <e p="Instruction.cs" t="Include" />
         <e p="Models" t="Include">
           <e p="Pixel.cs" t="Include" />
           <e p="PixelPosition.cs" t="Include" />
