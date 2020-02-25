@@ -28,9 +28,9 @@ namespace ColourGridTests
         }
 
         [Test]
-        public void GivenAnFillRowWithAColourAndStartPositionAndEndPosition_ThenPixelsAreColoured()
+        public void GivenAGrid4x1AColourAndStartPositionAndEndPosition_WhenFillRowCalled_ThenPixelsAreColoured()
         {
-            _colourGrid = new Grid(4);
+            _colourGrid = new Grid(4,1);
             var expectedColour = "red";
             _colourGrid.FillRow(expectedColour, 0, 1, 2);
 
