@@ -4,6 +4,6 @@
 
 /.vs
 /ColourGrid/obj
-/ColourGrid/bin/Debug/netcoreapp3.1
+/ColourGrid/bin
 /ColourGridTests/obj
 /ColourGridTests/bin
