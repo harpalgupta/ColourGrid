@@ -92,13 +92,13 @@ namespace ColourGridProject
             {
                 throw new ApplicationException("Pixel Position out of bands");
             };
-            if (grid[pixelPosition.x, pixelPosition.y] != null)
+            if (grid[pixelPosition.y, pixelPosition.x] != null)
             {
-                grid[pixelPosition.x, pixelPosition.y].Colour = colour;
+                grid[pixelPosition.y, pixelPosition.x].Colour = colour;
             }
             else
             {
-                grid[pixelPosition.x, pixelPosition.y] = new Pixel
+                grid[pixelPosition.y, pixelPosition.x] = new Pixel
                 {
                     position = new PixelPosition
                     {
@@ -142,45 +142,19 @@ namespace ColourGridProject
             pixels.AddRange(touchingPositionsNotYetSeen);
             MorePixelsToCheck = touchingPositionsNotYetSeen.Any();
 
-            while (MorePixelsToCheck)
+            if (MorePixelsToCheck)
             {
-
-
                 foreach (var validtouchingPosition in touchingPositionsNotYetSeen)
                 {
-                    pixels.AddRange(GetDirectlyTouchingPixels(validtouchingPosition));
+                    var blah = GetDirectlyTouchingPixels(validtouchingPosition).Where(p => pixels.Any(c => c.x != p.x && c.y != p.y));
+                    return blah;
 
                 }
             }
+           
 
-//            if (upPosition != null && grid[upPosition.x, upPosition.y] == currentColour)
-//            {
-//                pixels.Add(upPosition);
-//                MorePixelsToCheck = true;
-//            }
-//
-//            if (leftPosition != null && grid[leftPosition.x, leftPosition.y] == currentColour)
-//            {
-//                pixels.Add(leftPosition);
-//                MorePixelsToCheck = true;
-//            }
-//
-//            if (downPosition != null && grid[downPosition.x, downPosition.y] == currentColour)
-//            {
-//                pixels.Add(downPosition);
-//                MorePixelsToCheck = true;
-//            }
-//
-//            if (rightPosition != null && grid[rightPosition.x, rightPosition.y] == currentColour)
-//            {
-//                pixels.Add(rightPosition);
-//                MorePixelsToCheck = true;
-//            }
-//
-//            if (pixels.Count == 0)
-//            {
-//                MorePixelsToCheck = false;
-//            }
+      
+            
 
             return pixels;
         }
@@ -188,6 +162,20 @@ namespace ColourGridProject
         public string GetPixelColour(PixelPosition pixelPosition)
         {
             return grid[pixelPosition.y, pixelPosition.x]?.Colour;
+        }
+
+        public void FloodBlockWithColour(string colour, PixelPosition pixelPosition)
+        {
+            if (!IsPositionValid(pixelPosition))
+            {
+                throw new ApplicationException("Pixel Position out of bands");
+            }
+
+            var adjacentPixelPositions = GetAllAdjacentSameColourPixels(pixelPosition);
+            foreach (var adjacentPixelPosition in adjacentPixelPositions)
+            {
+                FillPixel(colour, adjacentPixelPosition);
+            }
         }
     }
 }

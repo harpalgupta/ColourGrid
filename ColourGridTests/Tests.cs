@@ -3,6 +3,7 @@ using ColourGridProject;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ColourGridTests
@@ -10,7 +11,7 @@ namespace ColourGridTests
     [TestFixture]
     class Tests
     {
-        private Grid colourGrid;
+        private Grid _colourGrid;
 
         [SetUp]
         public void Setup()
@@ -21,19 +22,19 @@ namespace ColourGridTests
         [Test]
         public void GivenAColourGridInitalised2x2_WhenGetGridContentCalled_ThenReturnGridArray()
         {
-            colourGrid = new Grid(2);
-            Assert.That(colourGrid.GetGridContent().GetLength(0), Is.EqualTo(2));
-            Assert.That(colourGrid.GetGridContent().GetLength(1), Is.EqualTo(2));
+            _colourGrid = new Grid(2);
+            Assert.That(_colourGrid.GetGridContent().GetLength(0), Is.EqualTo(2));
+            Assert.That(_colourGrid.GetGridContent().GetLength(1), Is.EqualTo(2));
 
         }
         [Test]
         public void GivenAnFillRowWithAColourAndStartPositionAndEndPosition_ThenPixelsAreColoured()
         {
-            colourGrid = new Grid(4);
+            _colourGrid = new Grid(4);
             var expectedColour = "red";
-            colourGrid.FillRow(expectedColour, 0, 1, 2);
+            _colourGrid.FillRow(expectedColour, 0, 1, 2);
 
-            var grid = colourGrid.GetGridContent();
+            var grid = _colourGrid.GetGridContent();
             Assert.That(grid[0,1].Colour, Is.EqualTo(expectedColour));
             Assert.That(grid[0,2].Colour, Is.EqualTo(expectedColour));
 
@@ -42,45 +43,69 @@ namespace ColourGridTests
         [Test]
         public void GivenAnFillColumnWithAColourAndStartPositionAndEndPosition_ThenPixelsAreColoured()
         {
-            colourGrid = new Grid(4);
+            _colourGrid = new Grid(4);
             var expectedColour = "red";
-            colourGrid.FillColumn(expectedColour, 0, 1, 2);
+            _colourGrid.FillColumn(expectedColour, 0, 1, 2);
 
-            var grid = colourGrid.GetGridContent();
+            var grid = _colourGrid.GetGridContent();
             
             Assert.That(grid[1,0].Colour, Is.EqualTo(expectedColour));
             Assert.That(grid[2,0].Colour, Is.EqualTo(expectedColour));
 
         }
-        
         [Test]
-        public void GivenAnFillPixelWithAColourAndStartPositionAndEndPosition_ThenPixelsAreColoured()
+        public void GivenAPixelPositionAndColour_WhenFillPixelIsCalled_PixelShouldBeExpectedColour()
         {
-            colourGrid = new Grid(4);
+            _colourGrid = new Grid(4);
             var expectedColour = "red";
-            PixelPosition pixelPosition =  new PixelPosition{x=0, y=1}; 
-            colourGrid.FillPixel(expectedColour, pixelPosition);
-            var grid = colourGrid.GetGridContent();
-
-            var resultPixel = grid[0, 1];
-            Assert.That(resultPixel.Colour, Is.EqualTo(expectedColour));
-
+            var pixelPosition = new PixelPosition {x = 1, y=2};
+            
+            _colourGrid.FillPixel(expectedColour,pixelPosition);
+            Assert.That(_colourGrid.GetPixelColour(pixelPosition),Is.EqualTo(expectedColour));
+            
         }
+
 
         [Test]
         public void GivenABlockOfColouredPixels_AndPixelPositionInBlockGivrn_ThenAdjacentPixelsAreReturned()
         {
-            colourGrid = new Grid(4);
+            _colourGrid = new Grid(4);
             var expectedColour = "red";
-            colourGrid.FillRow(expectedColour, 0, 1, 2);
-            colourGrid.FillRow(expectedColour, 1, 1, 2);
+            _colourGrid.FillRow(expectedColour, 0, 1, 2);
+            _colourGrid.FillRow(expectedColour, 1, 1, 2);
 
-            var adjecent = colourGrid.GetAllAdjacentSameColourPixels(new PixelPosition { x=1, y=0 });
-            var grid = colourGrid.GetGridContent();
+            var adjecent = _colourGrid.GetAllAdjacentSameColourPixels(new PixelPosition { x=1, y=0 });
+            var grid = _colourGrid.GetGridContent();
             var resultPixel = grid[0, 1];
             Assert.That(resultPixel.Colour, Is.EqualTo(expectedColour));
+            var pixelPositions = adjecent as PixelPosition[] ?? adjecent.ToArray();
+            Assert.That(pixelPositions.Count(),Is.EqualTo(4));
+            Assert.That(pixelPositions.Any(p=>p.x==1&&p.y==0));
+            Assert.That(pixelPositions.Any(p=>p.x==2&&p.y==0));
+            Assert.That(pixelPositions.Any(p=>p.x==1&&p.y==1));
+            Assert.That(pixelPositions.Any(p=>p.x==2&&p.y==1));
 
         }
+        
+        [Test]
+        public void GivenABlockOfColouredPixels_AndPixelPositionInBlockGiven__WhenFloodCalledWithPixelPos_ThenAdjacentPixelsAreReturned()
+        {
+            _colourGrid = new Grid(4);
+            var expectedColour = "red";
+            var expectedNewFloodColour = "white";
+            _colourGrid.FillRow(expectedColour, 0, 1, 2);
+            _colourGrid.FillRow(expectedColour, 1, 1, 2);
+
+            _colourGrid.FloodBlockWithColour(expectedNewFloodColour, new PixelPosition {x = 1, y = 0});
+     
+            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {x = 2, y = 0}),Is.EqualTo(expectedNewFloodColour));
+            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {x = 2, y = 0}),Is.EqualTo(expectedNewFloodColour));
+            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {x = 1, y = 1}),Is.EqualTo(expectedNewFloodColour));;
+            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {x = 2, y = 1}),Is.EqualTo(expectedNewFloodColour));
+
+        }
+
+
 
 
     }
