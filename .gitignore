@@ -3,6 +3,7 @@
 ################################################################################
 
 /.vs
+/.idea
 /ColourGrid/obj
 /ColourGrid/bin
 /ColourGridTests/obj

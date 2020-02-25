@@ -57,7 +57,7 @@ namespace ColourGridTests
         {
             _colourGrid = new Grid(4);
             var expectedColour = "red";
-            var pixelPosition = new PixelPosition {x = 1, y = 2};
+            var pixelPosition = new PixelPosition {X = 1, Y = 2};
 
             _colourGrid.FillPixel(expectedColour, pixelPosition);
             Assert.That(_colourGrid.GetPixelColour(pixelPosition), Is.EqualTo(expectedColour));
@@ -72,16 +72,16 @@ namespace ColourGridTests
             _colourGrid.FillRow(expectedColour, 0, 1, 2);
             _colourGrid.FillRow(expectedColour, 1, 1, 2);
 
-            var adjecent = _colourGrid.GetAllAdjacentSameColourPixels(new PixelPosition {x = 1, y = 0});
+            var adjecent = _colourGrid.GetAllAdjacentSameColourPixels(new PixelPosition {X = 1, Y = 0});
             var grid = _colourGrid.GetGridContent();
             var resultPixel = grid[0, 1];
             Assert.That(resultPixel.Colour, Is.EqualTo(expectedColour));
             var pixelPositions = adjecent as PixelPosition[] ?? adjecent.ToArray();
             Assert.That(pixelPositions.Count(), Is.EqualTo(4));
-            Assert.That(pixelPositions.Any(p => p.x == 1 && p.y == 0));
-            Assert.That(pixelPositions.Any(p => p.x == 2 && p.y == 0));
-            Assert.That(pixelPositions.Any(p => p.x == 1 && p.y == 1));
-            Assert.That(pixelPositions.Any(p => p.x == 2 && p.y == 1));
+            Assert.That(pixelPositions.Any(p => p.X == 1 && p.Y == 0));
+            Assert.That(pixelPositions.Any(p => p.X == 2 && p.Y == 0));
+            Assert.That(pixelPositions.Any(p => p.X == 1 && p.Y == 1));
+            Assert.That(pixelPositions.Any(p => p.X == 2 && p.Y == 1));
         }
 
         [Test]
@@ -93,13 +93,13 @@ namespace ColourGridTests
             _colourGrid.FillRow(expectedColour, 0, 1, 2);
             _colourGrid.FillRow(expectedColour, 1, 1, 2);
 
-            _colourGrid.FloodBlockWithColour(expectedNewFloodColour, new PixelPosition {x = 1, y = 0});
+            _colourGrid.FloodBlockWithColour(expectedNewFloodColour, new PixelPosition {X = 1, Y = 0});
 
-            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {x = 2, y = 0}), Is.EqualTo(expectedNewFloodColour));
-            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {x = 2, y = 0}), Is.EqualTo(expectedNewFloodColour));
-            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {x = 1, y = 1}), Is.EqualTo(expectedNewFloodColour));
+            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {X = 2, Y = 0}), Is.EqualTo(expectedNewFloodColour));
+            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {X = 2, Y = 0}), Is.EqualTo(expectedNewFloodColour));
+            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {X = 1, Y = 1}), Is.EqualTo(expectedNewFloodColour));
             ;
-            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {x = 2, y = 1}), Is.EqualTo(expectedNewFloodColour));
+            Assert.That(_colourGrid.GetPixelColour(new PixelPosition {X = 2, Y = 1}), Is.EqualTo(expectedNewFloodColour));
         }
 
         [Test]
@@ -111,23 +111,21 @@ namespace ColourGridTests
             _colourGrid.FillRow(expectedColour, 0, 1, 2);
             _colourGrid.FillRow(expectedColour, 1, 1, 2);
 
-            Assert.Throws<ApplicationException>(() => _colourGrid.FloodBlockWithColour(expectedNewFloodColour, new PixelPosition {x = 9, y = 9}));
+            Assert.Throws<ApplicationException>(() => _colourGrid.FloodBlockWithColour(expectedNewFloodColour, new PixelPosition {X = 9, Y = 9}));
         }
 
         [Test]
         public void GivenAnInvalidPixelPosition_WhenFillPixelIsCalled_ThenExceptionThrown()
         {
             _colourGrid = new Grid(4);
-            var expectedColour = "red";
 
-            Assert.Throws<ApplicationException>(() => _colourGrid.FillPixel("red", new PixelPosition {x = 9, y = 9}));
+            Assert.Throws<ApplicationException>(() => _colourGrid.FillPixel("red", new PixelPosition {X = 9, Y = 9}));
         }
 
         [Test]
         public void GivenAPixelPositionWithAnOutOfBandEnd_WhenFillRowIsCalled_ThenExceptionThrown()
         {
             _colourGrid = new Grid(4);
-            var expectedColour = "red";
 
             Assert.Throws<ApplicationException>(() => _colourGrid.FillRow("red", 0, 0, 9));
         }
@@ -136,7 +134,6 @@ namespace ColourGridTests
         public void GivenAPixelPositionWithAnOutOfBandEnd_WhenFillColumnIsCalled_ThenExceptionThrown()
         {
             _colourGrid = new Grid(4);
-            var expectedColour = "red";
 
             Assert.Throws<ApplicationException>(() => _colourGrid.FillColumn("red", 0, 0, 9));
         }
