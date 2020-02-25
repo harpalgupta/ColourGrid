@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using ColourGrid;
 using ColourGridProject.Models;
 
@@ -11,8 +10,8 @@ namespace ColourGridProject
     {
         private Pixel[,] grid;
         private int gridDimension;
-        private bool MorePixelsToCheck = false;
-        private List<PixelPosition> pixels = new List<PixelPosition>();
+        private bool _morePixelsToCheck = false;
+        private readonly List<PixelPosition> _pixels = new List<PixelPosition>();
 
         public Grid(int gridDimension)
         {
@@ -52,10 +51,10 @@ namespace ColourGridProject
                 if (!IsPositionValid(currentPosition))
                 {
                     throw new ApplicationException("Pixel Position out of bands");
-                };
+                }
                 grid[row, currentPixel] = new Pixel
                 {
-                    position = currentPosition,
+                    Position = currentPosition,
                     Colour = colour
                 };
             }
@@ -76,11 +75,11 @@ namespace ColourGridProject
                 if (!IsPositionValid(currentPosition))
                 {
                     throw new ApplicationException("Pixel Position out of bands");
-                };
+                }
                 
                 grid[currentPixel, column] = new Pixel
                 {
-                    position = currentPosition,
+                    Position = currentPosition,
                     Colour = colour
                 };
             }
@@ -91,7 +90,7 @@ namespace ColourGridProject
             if (!IsPositionValid(pixelPosition))
             {
                 throw new ApplicationException("Pixel Position out of bands");
-            };
+            }
             if (grid[pixelPosition.y, pixelPosition.x] != null)
             {
                 grid[pixelPosition.y, pixelPosition.x].Colour = colour;
@@ -100,7 +99,7 @@ namespace ColourGridProject
             {
                 grid[pixelPosition.y, pixelPosition.x] = new Pixel
                 {
-                    position = new PixelPosition
+                    Position = new PixelPosition
                     {
                         x = pixelPosition.x,
                         y = pixelPosition.y
@@ -127,27 +126,27 @@ namespace ColourGridProject
             var rightPosition = new PixelPosition {x = pixelPosition.x + 1, y = pixelPosition.y};
             PixelPosition[] touchingPositions = {upPosition, leftPosition, downPosition, rightPosition};
 
-            var validtouchingPositions = touchingPositions.Where(t => IsPositionValid(t)).Where(t => GetPixelColour(t)==currentColour).ToArray();
+            var validTouchingPositions = touchingPositions.Where(IsPositionValid).Where(t => GetPixelColour(t)==currentColour).ToArray();
             
             var touchingPositionsNotYetSeen= new List<PixelPosition>();
-            foreach (var touchingPosition in validtouchingPositions)
+            foreach (var touchingPosition in validTouchingPositions)
             {
-                var repeated = pixels.Any(p => p.x == touchingPosition.x && p.y == touchingPosition.y);
+                var repeated = _pixels.Any(p => p.x == touchingPosition.x && p.y == touchingPosition.y);
                 if (!repeated)
                 {
                     touchingPositionsNotYetSeen.Add(touchingPosition);
                 }
             }
 
-            pixels.AddRange(touchingPositionsNotYetSeen);
-            MorePixelsToCheck = touchingPositionsNotYetSeen.Any();
+            _pixels.AddRange(touchingPositionsNotYetSeen);
+            _morePixelsToCheck = touchingPositionsNotYetSeen.Any();
 
-            if (MorePixelsToCheck)
+            if (_morePixelsToCheck)
             {
-                foreach (var validtouchingPosition in touchingPositionsNotYetSeen)
+                foreach (var validTouchingPosition in touchingPositionsNotYetSeen)
                 {
-                    var blah = GetDirectlyTouchingPixels(validtouchingPosition).Where(p => pixels.Any(c => c.x != p.x && c.y != p.y));
-                    return blah;
+                    var notYetSeenPixelsPositions = GetDirectlyTouchingPixels(validTouchingPosition).Where(p => _pixels.Any(c => c.x != p.x && c.y != p.y));
+                    return notYetSeenPixelsPositions;
 
                 }
             }
@@ -156,7 +155,7 @@ namespace ColourGridProject
       
             
 
-            return pixels;
+            return _pixels;
         }
 
         public string GetPixelColour(PixelPosition pixelPosition)

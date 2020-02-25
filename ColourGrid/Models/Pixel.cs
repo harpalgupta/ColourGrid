@@ -7,7 +7,7 @@ namespace ColourGridProject.Models
 {
     public class Pixel
     {
-        public PixelPosition position { get; set; }
+        public PixelPosition Position { get; set; }
         public string Colour { get; set; }
     }
 }
