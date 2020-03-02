@@ -6,18 +6,18 @@ using ColourGridProject.Models;
 
 namespace ColourGridProject
 {
-    public class Grid
+    public class GridService
     {
         private Pixel[,] grid;
         private bool _morePixelsToCheck;
-        private readonly List<PixelPosition> _pixels = new List<PixelPosition>();
+        private readonly List<PixelPosition> _pixelsSeen = new List<PixelPosition>();
 
-        public Grid(int gridDimension)
+        public GridService(int gridDimension)
         {
             grid = new Pixel[gridDimension, gridDimension];
         }
 
-        public Grid(int gridDimensionX, int gridDimensionY)
+        public GridService(int gridDimensionX, int gridDimensionY)
         {
             grid = new Pixel[gridDimensionY, gridDimensionX];
         }
@@ -25,17 +25,12 @@ namespace ColourGridProject
 
         private bool IsPositionValid(PixelPosition pixelPosition)
         {
-            if ((pixelPosition.X >= 0 && pixelPosition.X < grid.GetLength(1) && (pixelPosition.Y >= 0 && pixelPosition.Y < grid.GetLength(0))))
-            {
-                return true;
-            }
-
-            return false;
+            return pixelPosition.X >= 0 && pixelPosition.X < grid.GetLength(1) && (pixelPosition.Y >= 0 && pixelPosition.Y < grid.GetLength(0));
         }
 
         public Pixel[,] GetGridContent()
         {
-            return this.grid;
+            return grid;
         }
 
         public void FillRow(string colour, int row, int startPosition, int endPosition)
@@ -131,37 +126,34 @@ namespace ColourGridProject
         {
             var currentColour = GetPixelColour(pixelPosition);
 
+            var touchingPositions = GetTouchingPixelPositions(pixelPosition);
+
+            var validTouchingPositions = touchingPositions.Where(IsPositionValid).Where(t => GetPixelColour(t) == currentColour).ToArray();
+           
+            var touchingPositionsNotYetSeen = validTouchingPositions.Where(v => !_pixelsSeen.Any(p => p.X == v.X && p.Y == v.Y)).ToList();
+            
+            _pixelsSeen.AddRange(touchingPositionsNotYetSeen);
+
+            if (!touchingPositionsNotYetSeen.Any()) return _pixelsSeen;
+            {
+                foreach (var validTouchingPosition in touchingPositionsNotYetSeen)
+                {
+                    var notYetSeenPixelsPositions = GetDirectlyTouchingPixels(validTouchingPosition).Where(p => _pixelsSeen.Any(c => c.X != p.X && c.Y != p.Y));
+                    return notYetSeenPixelsPositions;
+                }
+            }
+
+            return _pixelsSeen;
+        }
+
+        private static PixelPosition[] GetTouchingPixelPositions(PixelPosition pixelPosition)
+        {
             var upPosition = new PixelPosition {X = pixelPosition.X, Y = pixelPosition.Y - 1};
             var leftPosition = new PixelPosition {X = pixelPosition.X - 1, Y = pixelPosition.Y};
             var downPosition = new PixelPosition {X = pixelPosition.X, Y = pixelPosition.Y + 1};
             var rightPosition = new PixelPosition {X = pixelPosition.X + 1, Y = pixelPosition.Y};
             PixelPosition[] touchingPositions = {upPosition, leftPosition, downPosition, rightPosition};
-
-            var validTouchingPositions = touchingPositions.Where(IsPositionValid).Where(t => GetPixelColour(t) == currentColour).ToArray();
-
-            var touchingPositionsNotYetSeen = new List<PixelPosition>();
-            foreach (var touchingPosition in validTouchingPositions)
-            {
-                var repeated = _pixels.Any(p => p.X == touchingPosition.X && p.Y == touchingPosition.Y);
-                if (!repeated)
-                {
-                    touchingPositionsNotYetSeen.Add(touchingPosition);
-                }
-            }
-
-            _pixels.AddRange(touchingPositionsNotYetSeen);
-            _morePixelsToCheck = touchingPositionsNotYetSeen.Any();
-
-            if (_morePixelsToCheck)
-            {
-                foreach (var validTouchingPosition in touchingPositionsNotYetSeen)
-                {
-                    var notYetSeenPixelsPositions = GetDirectlyTouchingPixels(validTouchingPosition).Where(p => _pixels.Any(c => c.X != p.X && c.Y != p.Y));
-                    return notYetSeenPixelsPositions;
-                }
-            }
-
-            return _pixels;
+            return touchingPositions;
         }
 
         public string GetPixelColour(PixelPosition pixelPosition)
