@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ColourGridProject.Services;
 
 namespace ColourGridTests
 {
@@ -16,7 +17,6 @@ namespace ColourGridTests
         [SetUp]
         public void Setup()
         {
-            //colourGrid = new Grid(2);
         }
 
         [Test]
@@ -98,7 +98,6 @@ namespace ColourGridTests
             Assert.That(_colourGridService.GetPixelColour(new PixelPosition {X = 2, Y = 0}), Is.EqualTo(expectedNewFloodColour));
             Assert.That(_colourGridService.GetPixelColour(new PixelPosition {X = 2, Y = 0}), Is.EqualTo(expectedNewFloodColour));
             Assert.That(_colourGridService.GetPixelColour(new PixelPosition {X = 1, Y = 1}), Is.EqualTo(expectedNewFloodColour));
-            ;
             Assert.That(_colourGridService.GetPixelColour(new PixelPosition {X = 2, Y = 1}), Is.EqualTo(expectedNewFloodColour));
         }
 

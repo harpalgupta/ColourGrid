@@ -4,33 +4,26 @@ using System.Linq;
 using ColourGrid;
 using ColourGridProject.Models;
 
-namespace ColourGridProject
+namespace ColourGridProject.Services
 {
     public class GridService
     {
-        private Pixel[,] grid;
-        private bool _morePixelsToCheck;
+        private readonly Pixel[,] _grid;
         private readonly List<PixelPosition> _pixelsSeen = new List<PixelPosition>();
 
         public GridService(int gridDimension)
         {
-            grid = new Pixel[gridDimension, gridDimension];
+            _grid = new Pixel[gridDimension, gridDimension];
         }
 
         public GridService(int gridDimensionX, int gridDimensionY)
         {
-            grid = new Pixel[gridDimensionY, gridDimensionX];
-        }
-
-
-        private bool IsPositionValid(PixelPosition pixelPosition)
-        {
-            return pixelPosition.X >= 0 && pixelPosition.X < grid.GetLength(1) && (pixelPosition.Y >= 0 && pixelPosition.Y < grid.GetLength(0));
+            _grid = new Pixel[gridDimensionY, gridDimensionX];
         }
 
         public Pixel[,] GetGridContent()
         {
-            return grid;
+            return _grid;
         }
 
         public void FillRow(string colour, int row, int startPosition, int endPosition)
@@ -50,7 +43,7 @@ namespace ColourGridProject
                     throw new ApplicationException("Pixel Position out of bands");
                 }
 
-                grid[row, currentPixel] = new Pixel
+                _grid[row, currentPixel] = new Pixel
                 {
                     Position = currentPosition,
                     Colour = colour
@@ -74,15 +67,18 @@ namespace ColourGridProject
             {
                 var currentPosition = new PixelPosition
                 {
-                    X= column,
+                    X = column,
                     Y = currentPixel
                 };
+
                 if (!IsPositionValid(currentPosition))
                 {
                     throw new ApplicationException("Pixel Position out of bands");
                 }
 
-                grid[currentPixel, column] = new Pixel
+                ;
+
+                _grid[currentPixel, column] = new Pixel
                 {
                     Position = currentPosition,
                     Colour = colour
@@ -97,13 +93,15 @@ namespace ColourGridProject
                 throw new ApplicationException("Pixel Position out of bands");
             }
 
-            if (grid[pixelPosition.Y, pixelPosition.X] != null)
+            ;
+
+            if (_grid[pixelPosition.Y, pixelPosition.X] != null)
             {
-                grid[pixelPosition.Y, pixelPosition.X].Colour = colour;
+                _grid[pixelPosition.Y, pixelPosition.X].Colour = colour;
             }
             else
             {
-                grid[pixelPosition.Y, pixelPosition.X] = new Pixel
+                _grid[pixelPosition.Y, pixelPosition.X] = new Pixel
                 {
                     Position = new PixelPosition
                     {
@@ -117,21 +115,16 @@ namespace ColourGridProject
 
         public IEnumerable<PixelPosition> GetAllAdjacentSameColourPixels(PixelPosition pixelPosition)
         {
-            var touchingPixels = GetDirectlyTouchingPixels(pixelPosition);
-
-            return touchingPixels;
+            return GetDirectlyTouchingPixels(pixelPosition);
         }
 
         private IEnumerable<PixelPosition> GetDirectlyTouchingPixels(PixelPosition pixelPosition)
         {
             var currentColour = GetPixelColour(pixelPosition);
-
             var touchingPositions = GetTouchingPixelPositions(pixelPosition);
-
             var validTouchingPositions = touchingPositions.Where(IsPositionValid).Where(t => GetPixelColour(t) == currentColour).ToArray();
-           
             var touchingPositionsNotYetSeen = validTouchingPositions.Where(v => !_pixelsSeen.Any(p => p.X == v.X && p.Y == v.Y)).ToList();
-            
+
             _pixelsSeen.AddRange(touchingPositionsNotYetSeen);
 
             if (!touchingPositionsNotYetSeen.Any()) return _pixelsSeen;
@@ -146,19 +139,9 @@ namespace ColourGridProject
             return _pixelsSeen;
         }
 
-        private static PixelPosition[] GetTouchingPixelPositions(PixelPosition pixelPosition)
-        {
-            var upPosition = new PixelPosition {X = pixelPosition.X, Y = pixelPosition.Y - 1};
-            var leftPosition = new PixelPosition {X = pixelPosition.X - 1, Y = pixelPosition.Y};
-            var downPosition = new PixelPosition {X = pixelPosition.X, Y = pixelPosition.Y + 1};
-            var rightPosition = new PixelPosition {X = pixelPosition.X + 1, Y = pixelPosition.Y};
-            PixelPosition[] touchingPositions = {upPosition, leftPosition, downPosition, rightPosition};
-            return touchingPositions;
-        }
-
         public string GetPixelColour(PixelPosition pixelPosition)
         {
-            return grid[pixelPosition.Y, pixelPosition.X]?.Colour;
+            return _grid[pixelPosition.Y, pixelPosition.X]?.Colour;
         }
 
         public void FloodBlockWithColour(string colour, PixelPosition pixelPosition)
@@ -173,6 +156,21 @@ namespace ColourGridProject
             {
                 FillPixel(colour, adjacentPixelPosition);
             }
+        }
+
+        private bool IsPositionValid(PixelPosition pixelPosition)
+        {
+            return pixelPosition.X >= 0 && pixelPosition.X < _grid.GetLength(1) && (pixelPosition.Y >= 0 && pixelPosition.Y < _grid.GetLength(0));
+        }
+
+        private static IEnumerable<PixelPosition> GetTouchingPixelPositions(PixelPosition pixelPosition)
+        {
+            var upPosition = new PixelPosition {X = pixelPosition.X, Y = pixelPosition.Y - 1};
+            var leftPosition = new PixelPosition {X = pixelPosition.X - 1, Y = pixelPosition.Y};
+            var downPosition = new PixelPosition {X = pixelPosition.X, Y = pixelPosition.Y + 1};
+            var rightPosition = new PixelPosition {X = pixelPosition.X + 1, Y = pixelPosition.Y};
+            PixelPosition[] touchingPositions = {upPosition, leftPosition, downPosition, rightPosition};
+            return touchingPositions;
         }
     }
 }
