@@ -10,15 +10,19 @@ namespace ColourGridProject.Services
     {
         private readonly Pixel[,] _grid;
         private readonly List<PixelPosition> _pixelsSeen = new List<PixelPosition>();
+        private int _startIndexPosition;
 
-        public GridService(int gridDimension)
+
+        public GridService(int gridDimension,int startIndexPosition)
         {
-            _grid = new Pixel[gridDimension, gridDimension];
+            _startIndexPosition = startIndexPosition;
+            _grid = new Pixel[gridDimension+_startIndexPosition, gridDimension+_startIndexPosition];
         }
 
-        public GridService(int gridDimensionX, int gridDimensionY)
+        public GridService(int gridDimensionX, int gridDimensionY,int startIndexPosition)
         {
-            _grid = new Pixel[gridDimensionY, gridDimensionX];
+            _startIndexPosition = startIndexPosition;
+            _grid = new Pixel[gridDimensionY + _startIndexPosition, gridDimensionX + _startIndexPosition];
         }
 
         public Pixel[,] GetGridContent()
@@ -40,7 +44,7 @@ namespace ColourGridProject.Services
 
                 if (!IsPositionValid(currentPosition))
                 {
-                    throw new ApplicationException("Pixel Position out of bands");
+                    throw new ApplicationException($"X:{currentPosition.X} Y:{currentPosition.Y} Pixel Position out of bands");
                 }
 
                 _grid[row, currentPixel] = new Pixel
@@ -73,10 +77,8 @@ namespace ColourGridProject.Services
 
                 if (!IsPositionValid(currentPosition))
                 {
-                    throw new ApplicationException("Pixel Position out of bands");
+                    throw new ApplicationException($"X:{currentPosition.X} Y:{currentPosition.Y} Pixel Position out of bands");
                 }
-
-                ;
 
                 _grid[currentPixel, column] = new Pixel
                 {
@@ -90,7 +92,7 @@ namespace ColourGridProject.Services
         {
             if (!IsPositionValid(pixelPosition))
             {
-                throw new ApplicationException("Pixel Position out of bands");
+                throw new ApplicationException($"X:{pixelPosition.X} Y:{pixelPosition.Y} Pixel Position out of bands");
             }
 
             ;
@@ -148,7 +150,7 @@ namespace ColourGridProject.Services
         {
             if (!IsPositionValid(pixelPosition))
             {
-                throw new ApplicationException("Pixel Position out of bands");
+                throw new ApplicationException($"X:{pixelPosition.X} Y:{pixelPosition.Y} Pixel Position out of bands");
             }
 
             var adjacentPixelPositions = GetAllAdjacentSameColourPixels(pixelPosition);
@@ -160,7 +162,7 @@ namespace ColourGridProject.Services
 
         private bool IsPositionValid(PixelPosition pixelPosition)
         {
-            return pixelPosition.X >= 0 && pixelPosition.X < _grid.GetLength(1) && (pixelPosition.Y >= 0 && pixelPosition.Y < _grid.GetLength(0));
+            return pixelPosition.X >= _startIndexPosition && pixelPosition.X < _grid.GetLength(1) && (pixelPosition.Y >= _startIndexPosition && pixelPosition.Y < _grid.GetLength(0));
         }
 
         private static IEnumerable<PixelPosition> GetTouchingPixelPositions(PixelPosition pixelPosition)
